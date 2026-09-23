@@ -1,4 +1,4 @@
-// This is the source code of AyuGram for Desktop.
+// This is the source code of Splashgram for Desktop.
 //
 // We do not and cannot prevent the use of our code,
 // but be respectful and credit the original author.
@@ -12,7 +12,7 @@
 
 using namespace sqlite_orm;
 auto storage = make_storage(
-	"./tdata/ayudata.db",
+	"./tdata/splashgram_data.db",
 	make_table<SchemaVersion>(
 		"SchemaVersion",
 		make_column("id", &SchemaVersion::id, primary_key()),
@@ -211,16 +211,16 @@ namespace AyuDatabase {
 void moveCurrentDatabase() {
 	const auto time = base::unixtime::now();
 
-	if (QFile::exists("./tdata/ayudata.db")) {
-		QFile::rename("./tdata/ayudata.db", QString("./tdata/ayudata_%1.db").arg(time));
+	if (QFile::exists("./tdata/splashgram_data.db")) {
+		QFile::rename("./tdata/splashgram_data.db", QString("./tdata/splashgram_data_%1.db").arg(time));
 	}
 
-	if (QFile::exists("./tdata/ayudata.db-shm")) {
-		QFile::rename("./tdata/ayudata.db-shm", QString("./tdata/ayudata_%1.db-shm").arg(time));
+	if (QFile::exists("./tdata/splashgram_data.db-shm")) {
+		QFile::rename("./tdata/splashgram_data.db-shm", QString("./tdata/splashgram_data_%1.db-shm").arg(time));
 	}
 
-	if (QFile::exists("./tdata/ayudata.db-wal")) {
-		QFile::rename("./tdata/ayudata.db-wal", QString("./tdata/ayudata_%1.db-wal").arg(time));
+	if (QFile::exists("./tdata/splashgram_data.db-wal")) {
+		QFile::rename("./tdata/splashgram_data.db-wal", QString("./tdata/splashgram_data_%1.db-wal").arg(time));
 	}
 }
 

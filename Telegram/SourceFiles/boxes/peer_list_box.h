@@ -89,11 +89,11 @@ public:
 
 		return _peer;
 	}
-	// AyuGram
+	// Splashgram
 	void setPeer(not_null<PeerData*> peer) {
 		_peer = peer;
 	}
-	// AyuGram
+	// Splashgram
 
 	[[nodiscard]] PeerListRowId id() const {
 		return _id;

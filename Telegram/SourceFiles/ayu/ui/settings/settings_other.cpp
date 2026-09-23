@@ -1,4 +1,4 @@
-// This is the source code of AyuGram for Desktop.
+// This is the source code of Splashgram for Desktop.
 //
 // We do not and cannot prevent the use of our code,
 // but be respectful and credit the original author.
@@ -49,7 +49,7 @@ struct Asset {
 Asset getAsset(const QString &name) {
 	const auto isNightMode = Window::Theme::IsNightMode();
 	const auto normalized = name.toLower();
-	QString icon = QString(":/gui/icons/ayu/donates/%1.svg").arg(normalized);
+	QString icon = QString(":/gui/icons/splashgram/donates/%1.svg").arg(normalized);
 	QColor background = isNightMode ? QColor(0xEEEEEE) : QColor(0x242B2C);
 	return {
 		.icon = std::move(icon),

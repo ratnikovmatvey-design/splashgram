@@ -10,7 +10,7 @@ arg3="$3"
 
 if [ ! -d "$FullScriptPath/../../../DesktopPrivate" ]; then
   echo ""
-  echo "This script is for building the production version of Telegram Desktop."
+  echo "This script is for building the production version of Splashgram Desktop."
   echo ""
   echo "For building custom versions please visit the build instructions page at:"
   echo "https://github.com/telegramdesktop/tdesktop/#build-instructions"
@@ -58,7 +58,7 @@ if [ "$BuildTarget" == "linux" ]; then
   SetupFile="tsetup.$AppVersionStrFull.tar.xz"
   ProjectPath="$HomePath/../out"
   ReleasePath="$ProjectPath/Release"
-  BinaryName="Telegram"
+  BinaryName="Splashgram"
 elif [ "$BuildTarget" == "mac" ] ; then
   if [ "$arg1" == "x86_64" ] || [ "$arg1" == "arm64" ]; then
     echo "Building version $AppVersionStrFull for macOS 10.13+ ($arg1).."
@@ -91,7 +91,7 @@ elif [ "$BuildTarget" == "mac" ] ; then
   fi
   ProjectPath="$HomePath/../out"
   ReleasePath="$ProjectPath/Release"
-  BinaryName="Telegram"
+  BinaryName="Splashgram"
   if [ "$MacArch" != "" ]; then
     BundleName="$BinaryName.$MacArch.app"
     SetupFile="tsetup.$MacArch.$AppVersionStrFull.dmg"
@@ -107,7 +107,7 @@ elif [ "$BuildTarget" == "macstore" ]; then
   echo "Building version $AppVersionStrFull for Mac App Store.."
   ProjectPath="$HomePath/../out"
   ReleasePath="$ProjectPath/Release"
-  BinaryName="Telegram Lite"
+  BinaryName="Splashgram"
   BundleName="$BinaryName.app"
 else
   Error "Invalid target!"

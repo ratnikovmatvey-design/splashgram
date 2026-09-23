@@ -1779,7 +1779,7 @@ bool checkReadyUpdate() {
 	QFileInfo updater(cWorkingDir() + u"tupdates/temp/Updater.exe"_q);
 #elif defined Q_OS_MAC // Q_OS_WIN
 	QString curUpdater = (cExeDir() + cExeName() + u"/Contents/Frameworks/Updater"_q);
-	QFileInfo updater(cWorkingDir() + u"tupdates/temp/Telegram.app/Contents/Frameworks/Updater"_q);
+	QFileInfo updater(cWorkingDir() + u"tupdates/temp/Splashgram.app/Contents/Frameworks/Updater"_q);
 #else // Q_OS_MAC
 	QString curUpdater = (cExeDir() + u"Updater"_q);
 	QFileInfo updater(cWorkingDir() + u"tupdates/temp/Updater"_q);
@@ -1859,16 +1859,16 @@ void UpdateApplication() {
 	if (UpdaterDisabled()) {
 		const auto url = [&] {
 #ifdef OS_WIN_STORE
-			return "https://www.microsoft.com/en-us/store/p/telegram-desktop/9nztwsqntd0s";
+			return "https://github.com/Splashgram/SplashgramDesktop/releases/latest";
 #elif defined OS_MAC_STORE // OS_WIN_STORE
-			return "https://itunes.apple.com/ae/app/telegram-desktop/id946399090";
+			return "https://github.com/Splashgram/SplashgramDesktop/releases/latest";
 #else // OS_WIN_STORE || OS_MAC_STORE
 			if (KSandbox::isFlatpak()) {
-				return "https://flathub.org/apps/details/org.telegram.desktop";
+				return "https://github.com/Splashgram/SplashgramDesktop/releases/latest";
 			} else if (KSandbox::isSnap()) {
-				return "https://snapcraft.io/telegram-desktop";
+				return "https://github.com/Splashgram/SplashgramDesktop/releases/latest";
 			}
-			return "https://t.me/AyuGramReleases";
+			return "https://t.me/SplashgramReleases";
 #endif // OS_WIN_STORE || OS_MAC_STORE
 		}();
 		UrlClickHandler::Open(url);
@@ -1902,7 +1902,7 @@ QString countAlphaVersionSignature(uint64 version) { // duplicated in packer.cpp
 		return QString();
 	}
 
-	QByteArray signedData = (qstr("TelegramBeta_") + QString::number(version, 16).toLower()).toUtf8();
+		QByteArray signedData = (qstr("SplashgramBeta_") + QString::number(version, 16).toLower()).toUtf8();
 
 	static const int32 shaSize = 20, keySize = 128;
 

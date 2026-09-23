@@ -39,7 +39,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include <IOKit/IOKitLib.h>
 #include <IOKit/hidsystem/ev_keymap.h>
 
-// AyuGram includes
+// Splashgram includes
 #include "ayu/ayu_settings.h"
 
 
@@ -321,7 +321,7 @@ QString objc_documentsPath() {
 QString objc_appDataPath() {
 	NSURL *url = [[NSFileManager defaultManager] URLForDirectory:NSApplicationSupportDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
 	if (url) {
-		return QString::fromUtf8([[url path] fileSystemRepresentation]) + '/' + AppName.utf16() + '/';
+		return QString::fromUtf8([[url path] fileSystemRepresentation]) + '/' + AppDataFolderName.utf16() + '/';
 	}
 	return QString();
 }

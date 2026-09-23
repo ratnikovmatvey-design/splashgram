@@ -1,4 +1,4 @@
-// This is the source code of AyuGram for Desktop.
+// This is the source code of Splashgram for Desktop.
 //
 // We do not and cannot prevent the use of our code,
 // but be respectful and credit the original author.
@@ -29,7 +29,7 @@ using json = nlohmann::json;
 namespace {
 
 std::string getSettingsPath() {
-	return (cWorkingDir() + u"tdata/ayu_settings.json"_q).toStdString();
+	return (cWorkingDir() + u"tdata/splashgram_settings.json"_q).toStdString();
 }
 
 void repaintApp() {
@@ -392,16 +392,16 @@ void AyuSettings::load() {
 			});
 			p["useGlobalGhostMode"] = true;
 
-			LOG(("AyuGramSettings: migrated ghost mode settings to per-account format"));
+			LOG(("SplashgramSettings: migrated ghost mode settings to per-account format"));
 		}
 
 		try {
 			from_json(p, settings);
 		} catch (...) {
-			LOG(("AyuGramSettings: failed to parse settings file"));
+			LOG(("SplashgramSettings: failed to parse settings file"));
 		}
 	} catch (...) {
-		LOG(("AyuGramSettings: failed to read settings file (not json-like)"));
+		LOG(("SplashgramSettings: failed to read settings file (not json-like)"));
 	}
 
 	if (cGhost()) {

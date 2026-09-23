@@ -1,4 +1,4 @@
-// This is the source code of AyuGram for Desktop.
+// This is the source code of Splashgram for Desktop.
 //
 // We do not and cannot prevent the use of our code,
 // but be respectful and credit the original author.
@@ -40,7 +40,7 @@ namespace {
 
 QImage MakeSupportLogo() {
 	const auto s = Size(st::supportLogoSize);
-	auto svg = QSvgRenderer(QString(":/gui/icons/ayu/donates/support_logo.svg"));
+	auto svg = QSvgRenderer(QString(":/gui/icons/splashgram/donates/support_logo.svg"));
 	auto image = QImage(
 		s * style::DevicePixelRatio(),
 		QImage::Format_ARGB32_Premultiplied);

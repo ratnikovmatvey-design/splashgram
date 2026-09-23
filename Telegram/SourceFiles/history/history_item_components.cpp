@@ -64,7 +64,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include <QtGui/QGuiApplication>
 
-// AyuGram includes
+// Splashgram includes
 #include "ayu/features/filters/filters_controller.h"
 
 

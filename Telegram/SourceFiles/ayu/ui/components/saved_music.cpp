@@ -1,4 +1,4 @@
-// This is the source code of AyuGram for Desktop.
+// This is the source code of Splashgram for Desktop.
 //
 // We do not and cannot prevent the use of our code,
 // but be respectful and credit the original author.
@@ -90,7 +90,7 @@ QPixmap MakeNoCoverImage(const QSize &size) {
 								 : st::windowBoldFg->c.lighter();
 		image.fill(bgColor);
 
-		auto svgIcon = QSvgRenderer(u":/gui/icons/ayu/nocover.svg"_q);
+		auto svgIcon = QSvgRenderer(u":/gui/icons/splashgram/nocover.svg"_q);
 		p.setPen(st::windowBoldFg->p);
 		svgIcon.render(&p, QRect(0, 0, size.width(), size.height()));
 	}

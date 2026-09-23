@@ -5,7 +5,7 @@
 # For license and copyright information please follow this link:
 # https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 """
-Update the Hunspell dictionaries manifest consumed by Telegram Desktop.
+Update the Hunspell dictionaries manifest consumed by Splashgram Desktop.
 
 One end-to-end run:
   1. Shallow-clone Chromium's hunspell_dictionaries repo into --cache-dir.

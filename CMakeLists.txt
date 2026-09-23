@@ -16,11 +16,11 @@ if (NOT DEFINED CMAKE_CONFIGURATION_TYPES)
     set(configuration_types_init 1)
 endif()
 
-project(Telegram
+project(Splashgram
     LANGUAGES C CXX
     VERSION ${desktop_app_version_cmake}
-    DESCRIPTION "AyuGram Desktop"
-    HOMEPAGE_URL "https://ayugram.one"
+    DESCRIPTION "Splashgram Desktop"
+    HOMEPAGE_URL "https://splashgram.one"
 )
 
 if (APPLE)

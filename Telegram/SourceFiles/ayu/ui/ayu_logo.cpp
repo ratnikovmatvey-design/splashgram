@@ -1,4 +1,4 @@
-// This is the source code of AyuGram for Desktop.
+// This is the source code of Splashgram for Desktop.
 //
 // We do not and cannot prevent the use of our code,
 // but be respectful and credit the original author.
@@ -21,7 +21,7 @@ namespace AyuAssets {
 QString appIcoPath() {
 	const auto &settings = AyuSettings::getInstance();
 	return cWorkingDir()
-		+ u"tdata/AyuGram-"_q
+		+ u"tdata/Splashgram-"_q
 		+ settings.appIcon()
 		+ u".ico"_q;
 }
@@ -36,13 +36,13 @@ void loadAppIco() {
 		f.remove();
 	}
 	f.close();
-	QFile::copy(qsl(":/gui/art/ayu/%1/app_icon.ico").arg(settings.appIcon()), iconPath);
+	QFile::copy(qsl(":/gui/art/splashgram/%1/app_icon.ico").arg(settings.appIcon()), iconPath);
 }
 
 QImage CreateImage(const QString &name, const QSize resultImageSize, const int padding = 0) {
 	const auto iconSize = resultImageSize.shrunkBy(QMargins(padding, padding, padding, padding));
 
-	const auto pngPath = qsl(":/gui/art/ayu/%1/app.png").arg(name);
+	const auto pngPath = qsl(":/gui/art/splashgram/%1/app.png").arg(name);
 	if (QFile::exists(pngPath)) {
 		const auto loaded = QImage(pngPath).scaled(iconSize, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		auto res = QImage(
@@ -57,7 +57,7 @@ QImage CreateImage(const QString &name, const QSize resultImageSize, const int p
 		return res;
 	}
 
-	const auto svgPath = qsl(":/gui/art/ayu/%1/app.svg").arg(name);
+	const auto svgPath = qsl(":/gui/art/splashgram/%1/app.svg").arg(name);
 	if (!QFile::exists(svgPath)) {
 		return {};
 	}

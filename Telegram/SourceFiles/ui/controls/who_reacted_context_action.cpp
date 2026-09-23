@@ -27,7 +27,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 
 #include <QtCore/QLocale>
 
-// AyuGram includes
+// Splashgram includes
 #include "ayu/ui/ayu_userpic.h"
 
 

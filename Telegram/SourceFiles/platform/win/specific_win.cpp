@@ -241,20 +241,10 @@ QString psAppDataPath() {
 	if (GetEnvironmentVariable(L"APPDATA", wstrPath, maxFileLen)) {
 		QDir appData(QString::fromStdWString(std::wstring(wstrPath)));
 #ifdef OS_WIN_STORE
-		return appData.absolutePath() + u"/Telegram Desktop UWP/"_q;
+		return appData.absolutePath() + u"/Splashgram Desktop UWP/"_q;
 #else // OS_WIN_STORE
-		return appData.absolutePath() + '/' + AppName.utf16() + '/';
+		return appData.absolutePath() + '/' + AppDataFolderName.utf16() + '/';
 #endif // OS_WIN_STORE
-	}
-	return QString();
-}
-
-QString psAppDataPathOld() {
-	static const int maxFileLen = MAX_PATH * 10;
-	WCHAR wstrPath[maxFileLen];
-	if (GetEnvironmentVariable(L"APPDATA", wstrPath, maxFileLen)) {
-		QDir appData(QString::fromStdWString(std::wstring(wstrPath)));
-		return appData.absolutePath() + '/' + AppNameOld.utf16() + '/';
 	}
 	return QString();
 }
@@ -322,10 +312,10 @@ void psDoFixPrevious() {
 		HRESULT userDesktopRes = SHGetFolderPath(0, CSIDL_DESKTOPDIRECTORY, 0, SHGFP_TYPE_CURRENT, userDesktopFolder);
 		HRESULT commonDesktopRes = SHGetFolderPath(0, CSIDL_COMMON_DESKTOPDIRECTORY, 0, SHGFP_TYPE_CURRENT, commonDesktopFolder);
 		if (SUCCEEDED(userDesktopRes)) {
-			userDesktopLnk = QString::fromWCharArray(userDesktopFolder) + "\\AyuGram.lnk";
+			userDesktopLnk = QString::fromWCharArray(userDesktopFolder) + "\\Splashgram.lnk";
 		}
 		if (SUCCEEDED(commonDesktopRes)) {
-			commonDesktopLnk = QString::fromWCharArray(commonDesktopFolder) + "\\AyuGram.lnk";
+			commonDesktopLnk = QString::fromWCharArray(commonDesktopFolder) + "\\Splashgram.lnk";
 		}
 		QFile userDesktopFile(userDesktopLnk), commonDesktopFile(commonDesktopLnk);
 		if (QFile::exists(userDesktopLnk) && QFile::exists(commonDesktopLnk) && userDesktopLnk != commonDesktopLnk) {
@@ -476,8 +466,8 @@ void AutostartToggle(bool enabled, Fn<void(bool)> done) {
 		silent,
 		FOLDERID_Startup,
 		L"-autostart",
-		L"Telegram autorun link.\n"
-		"You can disable autorun in Telegram settings.");
+		L"Splashgram autorun link.\n"
+		"You can disable autorun in Splashgram settings.");
 	if (done) {
 		done(enabled && success);
 	}
@@ -722,8 +712,8 @@ void psSendToMenu(bool send, bool silent) {
 		silent,
 		FOLDERID_SendTo,
 		L"--",
-		L"Telegram send to link.\n"
-		"You can disable send to menu item in Telegram settings.");
+		L"Splashgram send to link.\n"
+		"You can disable send to menu item in Splashgram settings.");
 }
 
 // Stub while we still support Windows 7.

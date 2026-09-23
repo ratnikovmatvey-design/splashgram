@@ -30,7 +30,7 @@ w/CVnbwQOw0g5GBwwFV3r0uTTvy44xx8XXxk+Qknu4eBCsmrAFNnAgMBAAE=\n\
 extern const char *PrivateKey;
 extern const char *PrivateBetaKey;
 
-// AyuGram includes
+// Splashgram includes
 #include "packer_private.h" // RSA PRIVATE KEYS for update signing
 
 
@@ -526,7 +526,7 @@ QString countAlphaVersionSignature(quint64 version) { // duplicated in autoupdat
 		return QString();
 	}
 
-	QByteArray signedData = (QLatin1String("TelegramBeta_") + QString::number(version, 16).toLower()).toUtf8();
+	QByteArray signedData = (QLatin1String("SplashgramBeta_") + QString::number(version, 16).toLower()).toUtf8();
 
 	static const int32 shaSize = 20, keySize = 128;
 

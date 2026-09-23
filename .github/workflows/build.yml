@@ -1,0 +1,240 @@
+name: Splashgram Windows Release
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+env:
+  WINDOWS_SDK_VERSION: "10.0.26100.0"
+  CMAKE_GENERATOR: Ninja Multi-Config
+
+jobs:
+  windows-release:
+    name: Build Splashgram (Windows x64)
+    runs-on: windows-2022
+    timeout-minutes: 360
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Check out source and submodules
+        uses: actions/checkout@v4
+        with:
+          path: tdesktop
+          submodules: recursive
+
+      - name: Create dependency roots
+        run: |
+          New-Item -ItemType Directory -Force -Path Libraries, ThirdParty | Out-Null
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Initialize MSVC and Windows SDK
+        uses: ilammy/msvc-dev-cmd@v1.13.0
+        with:
+          arch: x64
+          sdk: ${{ env.WINDOWS_SDK_VERSION }}
+
+      - name: Export Visual Studio path for native dependencies
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} "Microsoft Visual Studio\Installer\vswhere.exe"
+          if (-not (Test-Path $vswhere)) {
+            throw "vswhere.exe was not found."
+          }
+
+          $installationPath = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if ([string]::IsNullOrWhiteSpace($installationPath)) {
+            throw "A Visual Studio installation with MSVC was not found."
+          }
+
+          $gypPath = $installationPath.Trim() -replace '\\+$', ''
+          "GYP_MSVS_OVERRIDE_PATH=$gypPath\" >> $env:GITHUB_ENV
+          "GYP_MSVS_VERSION=2022" >> $env:GITHUB_ENV
+
+      - name: Verify Windows toolchain
+        run: |
+          $ErrorActionPreference = "Stop"
+          cmake --version
+          ninja --version
+          $cl = Get-Command cl.exe -ErrorAction Stop
+          $mt = Get-Command mt.exe -ErrorAction Stop
+          Write-Host "MSVC: $($cl.Source)"
+          Write-Host "Manifest tool: $($mt.Source)"
+
+          $sdkInclude = Join-Path ${env:ProgramFiles(x86)} "Windows Kits\10\Include\${env:WINDOWS_SDK_VERSION}"
+          if (-not (Test-Path $sdkInclude)) {
+            throw "Windows SDK $env:WINDOWS_SDK_VERSION was not found at $sdkInclude."
+          }
+
+          if (-not (cmake --help | Select-String -SimpleMatch "Ninja Multi-Config")) {
+            throw "The installed CMake does not provide the Ninja Multi-Config generator."
+          }
+
+      - name: Configure NuGet feed
+        shell: cmd
+        run: |
+          nuget sources Disable -Name "Microsoft Visual Studio Offline Packages" || echo Offline NuGet source is not configured.
+          nuget sources Add -Source https://api.nuget.org/v3/index.json || echo NuGet.org source is already configured.
+          exit /b 0
+
+      - name: Validate Telegram API secrets
+        env:
+          TDESKTOP_API_ID: ${{ secrets.TDESKTOP_API_ID }}
+          TDESKTOP_API_HASH: ${{ secrets.TDESKTOP_API_HASH }}
+        run: |
+          if ([string]::IsNullOrWhiteSpace($env:TDESKTOP_API_ID) -or [string]::IsNullOrWhiteSpace($env:TDESKTOP_API_HASH)) {
+            throw "Set TDESKTOP_API_ID and TDESKTOP_API_HASH in the repository or environment secrets."
+          }
+          if ($env:TDESKTOP_API_ID -notmatch '^\d+$' -or $env:TDESKTOP_API_HASH -notmatch '^[0-9a-fA-F]+$') {
+            throw "TDESKTOP_API_ID must be numeric and TDESKTOP_API_HASH must be hexadecimal."
+          }
+
+      - name: Cache ThirdParty dependencies
+        uses: actions/cache@v4
+        with:
+          path: ThirdParty
+          key: ${{ runner.os }}-x64-thirdparty-${{ hashFiles('tdesktop/Telegram/build/prepare/prepare.py', 'tdesktop/Telegram/build/prepare/win.bat', 'tdesktop/docs/building-win.md') }}
+          restore-keys: |
+            ${{ runner.os }}-x64-thirdparty-
+
+      - name: Cache Windows libraries
+        uses: actions/cache@v4
+        with:
+          path: |
+            Libraries\win64
+            Libraries\cache_keys
+          key: ${{ runner.os }}-x64-libraries-${{ hashFiles('tdesktop/Telegram/build/prepare/prepare.py', 'tdesktop/Telegram/build/prepare/win.bat', 'tdesktop/docs/building-win.md') }}
+          restore-keys: |
+            ${{ runner.os }}-x64-libraries-
+
+      - name: Configure git identity for dependency patches
+        run: |
+          git -C tdesktop config user.email "ci@splashgram.invalid"
+          git -C tdesktop config user.name "Splashgram CI"
+
+      - name: Prepare native dependencies
+        shell: cmd
+        run: |
+          call tdesktop\Telegram\build\prepare\win.bat silent
+
+      - name: Configure Release build
+        shell: cmd
+        env:
+          TDESKTOP_API_ID: ${{ secrets.TDESKTOP_API_ID }}
+          TDESKTOP_API_HASH: ${{ secrets.TDESKTOP_API_HASH }}
+        run: |
+          cd /d tdesktop\Telegram
+          call configure.bat ^
+            -G "Ninja Multi-Config" ^
+            -D TDESKTOP_API_ID=%TDESKTOP_API_ID% ^
+            -D TDESKTOP_API_HASH=%TDESKTOP_API_HASH% ^
+            -D CMAKE_SYSTEM_VERSION=%WINDOWS_SDK_VERSION% ^
+            -D CMAKE_CONFIGURATION_TYPES=Release ^
+            -D CMAKE_COMPILE_WARNING_AS_ERROR=OFF ^
+            -D DESKTOP_APP_DISABLE_AUTOUPDATE=OFF ^
+            -D DESKTOP_APP_DISABLE_CRASH_REPORTS=OFF
+
+      - name: Build Splashgram Release
+        run: |
+          cmake --build tdesktop\out --config Release --target Telegram --parallel
+
+      - name: Install Inno Setup
+        run: |
+          choco install innosetup --no-progress --yes
+
+          $iscc = @(
+            (Join-Path ${env:ProgramFiles(x86)} "Inno Setup 6\ISCC.exe"),
+            (Join-Path $env:ProgramFiles "Inno Setup 6\ISCC.exe")
+          ) | Where-Object { Test-Path $_ } | Select-Object -First 1
+
+          if (-not $iscc) {
+            throw "ISCC.exe was not found after installing Inno Setup."
+          }
+          "ISCC_PATH=$iscc" >> $env:GITHUB_ENV
+
+      - name: Package unsigned installer
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releasePath = Join-Path $env:GITHUB_WORKSPACE "tdesktop\out\Release"
+          $versionFile = Join-Path $env:GITHUB_WORKSPACE "tdesktop\Telegram\build\version"
+          $setupSource = Join-Path $env:GITHUB_WORKSPACE "tdesktop\Telegram\build\setup.iss"
+          $setupTemporary = Join-Path $env:RUNNER_TEMP "Splashgram.setup.iss"
+
+          foreach ($required in @("Splashgram.exe", "Updater.exe")) {
+            $path = Join-Path $releasePath $required
+            if (-not (Test-Path $path)) {
+              throw "Required release file is missing: $path"
+            }
+          }
+
+          $versionMatch = Get-Content $versionFile | Where-Object { $_ -match '^AppVersionStrSmall\s+(.+)$' } | Select-Object -First 1
+          if (-not $versionMatch) {
+            throw "AppVersionStrSmall was not found in $versionFile."
+          }
+          $version = ([regex]::Match($versionMatch, '^AppVersionStrSmall\s+(.+)$')).Groups[1].Value.Trim()
+
+          $setupContents = Get-Content $setupSource -Raw
+          $setupContents = [regex]::Replace($setupContents, '(?m)^SignTool=.*(?:\r?\n|$)', '')
+          $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
+          [System.IO.File]::WriteAllText($setupTemporary, $setupContents, $utf8NoBom)
+
+          $isccArguments = @(
+            "/Qp"
+            "/dMyAppVersion=$version"
+            "/dMyAppVersionZero=$version"
+            "/dMyAppVersionFull=$version"
+            "/dReleasePath=$releasePath"
+            "/dMyBuildTarget=win64"
+            $setupTemporary
+          )
+          & $env:ISCC_PATH @isccArguments
+          if ($LASTEXITCODE -ne 0) {
+            exit $LASTEXITCODE
+          }
+
+          $installer = Get-ChildItem $releasePath -Filter "splashgramsetup-x64.*.exe" | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $installer) {
+            throw "Inno Setup did not produce an x64 installer."
+          }
+          "SPLASHGRAM_VERSION=$version" >> $env:GITHUB_ENV
+
+      - name: Stage release artifacts
+        run: |
+          $ErrorActionPreference = "Stop"
+          $releasePath = Join-Path $env:GITHUB_WORKSPACE "tdesktop\out\Release"
+          $artifactPath = Join-Path $env:RUNNER_TEMP "splashgram-release"
+          New-Item -ItemType Directory -Force -Path $artifactPath | Out-Null
+
+          Copy-Item (Join-Path $releasePath "Splashgram.exe") $artifactPath
+          Copy-Item (Join-Path $releasePath "Updater.exe") $artifactPath
+          Copy-Item (Join-Path $releasePath "splashgramsetup-x64.*.exe") $artifactPath
+          if (Test-Path (Join-Path $releasePath "modules")) {
+            Copy-Item (Join-Path $releasePath "modules") $artifactPath -Recurse
+          }
+
+          $files = Get-ChildItem $artifactPath -File -Recurse | Sort-Object FullName
+          $hashes = $files | ForEach-Object {
+            $hash = (Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()
+            "$hash  $($_.FullName.Substring($artifactPath.Length + 1))"
+          }
+          $hashes | Set-Content (Join-Path $artifactPath "SHA256SUMS.txt")
+
+          "ARTIFACT_PATH=$artifactPath" >> $env:GITHUB_ENV
+
+      - name: Upload Release artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Splashgram-Windows-x64-${{ github.run_number }}
+          path: ${{ runner.temp }}\splashgram-release
+          if-no-files-found: error
+          retention-days: 14

@@ -1,11 +1,11 @@
 [Desktop Entry]
-Name=AyuGram Desktop
-Comment=Desktop version of AyuGram - ToS breaking Telegram client
-TryExec=AyuGram
-Exec=env DESKTOPINTEGRATION=1 AyuGram -- %U
-Icon=com.ayugram.desktop
+Name=Splashgram Desktop
+Comment=Desktop version of Splashgram - ToS breaking Telegram client
+TryExec=Splashgram
+Exec=env DESKTOPINTEGRATION=1 Splashgram -- %U
+Icon=com.splashgram.desktop
 Terminal=false
-StartupWMClass=AyuGram
+StartupWMClass=Splashgram
 Type=Application
 Categories=Chat;Network;InstantMessaging;Qt;
 MimeType=x-scheme-handler/tg;x-scheme-handler/tonsite;
@@ -17,6 +17,6 @@ X-GNOME-UsesNotifications=true
 X-GNOME-SingleWindow=true
 
 [Desktop Action quit]
-Exec=AyuGram -quit
-Name=Quit AyuGram
+Exec=Splashgram -quit
+Name=Quit Splashgram
 Icon=application-exit

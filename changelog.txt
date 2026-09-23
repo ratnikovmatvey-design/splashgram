@@ -622,12 +622,12 @@
 - Touchpad swipe back to go back in navigation history.
 - Touchpad swipe between folders if they're horizontal.
 - Out-of-the-box monochrome tray icon on Linux.
-- Icons telegram{,{,-attention,-mute}-panel} are renamed
-to org.telegram.desktop{,{,-attention,-mute}-symbolic} for
+- Icons splashgram{,{,-attention,-mute}-panel} are renamed
+to com.splashgram.desktop{,{,-attention,-mute}-symbolic} for
 unified icon lookup in multiple (sometimes sandboxed) builds
 and GTK icon recolorization support.
 - Snap package got icon theming support,
-the icon names are snap.telegram-desktop.{,{,-attention,-mute}-symbolic}
+the icon names are snap.splashgram.{,{,-attention,-mute}-symbolic}
 (notice the name ends with a dot in case of no suffix!).
 
 5.12.3 (10.03.25)

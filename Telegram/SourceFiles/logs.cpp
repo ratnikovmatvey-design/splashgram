@@ -362,14 +362,8 @@ void start() {
 
 	LogsData = new LogsDataFields();
 	if (cWorkingDir().isEmpty()) {
-#if (!defined Q_OS_WIN && !defined _DEBUG) || defined Q_OS_WINRT || defined OS_WIN_STORE || defined OS_MAC_STORE
-		cForceWorkingDir(psAppDataPath());
-#else // (!Q_OS_WIN && !_DEBUG) || Q_OS_WINRT || OS_WIN_STORE || OS_MAC_STORE
-		cForceWorkingDir(cExeDir());
-		if (!LogsData->openMain()) {
-			cForceWorkingDir(psAppDataPath());
-		}
-#endif // (!Q_OS_WIN && !_DEBUG) || Q_OS_WINRT || OS_WIN_STORE || OS_MAC_STORE
+		const auto appDataPath = psAppDataPath();
+		cForceWorkingDir(appDataPath.isEmpty() ? cExeDir() : appDataPath);
 	}
 
 	if (launcher.validateCustomWorkingDir()) {
@@ -408,11 +402,7 @@ void start() {
 		return;
 	}
 
-#ifdef Q_OS_WIN
-	if (cWorkingDir() == psAppDataPath()) { // fix old "Telegram Win (Unofficial)" version
-		MoveOldDataFiles(psAppDataPathOld());
-	}
-#elif !defined Q_OS_MAC && !defined _DEBUG // fix first version
+#if !defined Q_OS_WIN && !defined Q_OS_MAC && !defined _DEBUG // fix first version
 	MoveOldDataFiles(launcher.initialWorkingDir());
 #endif
 

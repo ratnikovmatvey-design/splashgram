@@ -21,7 +21,7 @@ https://github.com/telegramdesktop/tdesktop/blob/master/LEGAL
 #include <QtCore/QMutex>
 #include <QtSvg/QSvgRenderer>
 
-// AyuGram includes
+// Splashgram includes
 #include "ayu/ayu_settings.h"
 #include "ayu/ui/ayu_userpic.h"
 

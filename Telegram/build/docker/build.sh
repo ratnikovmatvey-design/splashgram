@@ -8,7 +8,7 @@ popd > /dev/null
 
 if [ ! -d "$FullScriptPath/../../../../DesktopPrivate" ]; then
   echo ""
-  echo "This script is for building the production version of Telegram Desktop."
+  echo "This script is for building the production version of Splashgram Desktop."
   echo ""
   echo "For building custom versions please visit the build instructions page at:"
   echo "https://github.com/telegramdesktop/tdesktop/#build-instructions"
@@ -20,7 +20,7 @@ cd $HomePath
 
 ProjectPath="$HomePath/../out"
 ReleasePath="$ProjectPath/Release"
-BinaryName="Telegram"
+BinaryName="Splashgram"
 
 if ! command -v cmake >/dev/null 2>&1; then
   ln -s cmake3 /usr/bin/cmake
